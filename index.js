@@ -3,7 +3,7 @@
 import atom from 'atom';
 import { install } from 'atom-package-deps';
 import { rangeFromLineNumber } from 'atom-linter';
-import { allowUnsafeNewFunction } from 'loophole';
+import { allowUnsafeEval } from 'loophole';
 import tapplint from 'tapplint';
 import ruleURI from 'eslint-rule-documentation';
 
@@ -76,7 +76,7 @@ export function provideLinter() {
         }]
       };
 
-      allowUnsafeNewFunction(() => {
+      allowUnsafeEval(() => {
         report = tapplint.lintText(text, {
           fileName: filePath
         });
