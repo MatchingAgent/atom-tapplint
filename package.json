@@ -6,7 +6,7 @@
   "main": "index.js",
   "license": "MIT",
   "repository": "MatchingAgent/atom-tapplint",
-  "script": {
+  "scripts": {
     "test": "tapplint"
   },
   "author": {
