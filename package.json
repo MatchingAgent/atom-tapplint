@@ -38,5 +38,11 @@
         "1.0.0": "provideLinter"
       }
     }
+  },
+  "babel": {
+    "presets": [
+      "es2015-node4",
+      "stage-2"
+    ]
   }
 }
