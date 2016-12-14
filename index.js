@@ -3,8 +3,9 @@
 import atom from 'atom';
 import { install } from 'atom-package-deps';
 import { rangeFromLineNumber } from 'atom-linter';
-import ruleURI from 'eslint-rule-documentation';
+import { allowUnsafeNewFunction } from 'loophole';
 import tapplint from 'tapplint';
+import ruleURI from 'eslint-rule-documentation';
 
 // (message: Object, err: Error) => string
 function selectMessageHtml(result) {
@@ -69,8 +70,16 @@ export function provideLinter() {
 
       const text = editor.getText();
       const filePath = editor.getPath();
-      const report = tapplint.lintText(text, {
-        fileName: filePath
+      let report = {
+        results: [{
+          messages: []
+        }]
+      };
+
+      allowUnsafeNewFunction(() => {
+        report = tapplint.lintText(text, {
+          fileName: filePath
+        });
       });
 
       const [{
