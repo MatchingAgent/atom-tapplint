@@ -1,0 +1,42 @@
+{
+  "name": "tapplint",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Tapplint plugin for Atom",
+  "main": "index.js",
+  "license": "MIT",
+  "repository": "MatchingAgent/atom-tapplint",
+  "script": {
+    "test": "tapplint"
+  },
+  "author": {
+    "name": "Shogo Sensui",
+    "email": "shogo.sensui@gmail.com",
+    "url": "github.com/1000ch"
+  },
+  "engines": {
+    "atom": ">=1.0.11"
+  },
+  "keywords": [
+    "javascript",
+    "linter",
+    "eslint",
+    "code-style"
+  ],
+  "dependencies": {
+    "atom-linter": "^8.0.0",
+    "atom-package-deps": "^4.0.1",
+    "eslint-rule-documentation": "^1.0.4",
+    "tapplint": "*"
+  },
+  "package-deps": [
+    "linter"
+  ],
+  "providedServices": {
+    "linter": {
+      "versions": {
+        "1.0.0": "provideLinter"
+      }
+    }
+  }
+}
