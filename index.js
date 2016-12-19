@@ -1,11 +1,13 @@
 /** @babel */
 
-import atom from 'atom';
 import { install } from 'atom-package-deps';
 import { rangeFromLineNumber } from 'atom-linter';
-import { allowUnsafeEval } from 'loophole';
-import tapplint from 'tapplint';
+import { allowUnsafeNewFunction } from 'loophole';
 import ruleURI from 'eslint-rule-documentation';
+let tapplint;
+allowUnsafeNewFunction(() => {
+  tapplint = require('tapplint');
+});
 
 // (message: Object, err: Error) => string
 function selectMessageHtml(result) {
@@ -62,12 +64,6 @@ export function provideLinter() {
     scope: 'file',
     lintOnFly: true,
     lint: editor => {
-      const directory = atom.project.rootDirectories[0];
-
-      if (!directory) {
-        return Promise.resolve([]);
-      }
-
       const text = editor.getText();
       const filePath = editor.getPath();
       let report = {
@@ -76,7 +72,7 @@ export function provideLinter() {
         }]
       };
 
-      allowUnsafeEval(() => {
+      allowUnsafeNewFunction(() => {
         report = tapplint.lintText(text, {
           fileName: filePath
         });
