@@ -4,13 +4,10 @@ import { install } from 'atom-package-deps';
 import { rangeFromLineNumber } from 'atom-linter';
 import { allowUnsafeNewFunction } from 'loophole';
 import ruleURI from 'eslint-rule-documentation';
-let tapplint;
-allowUnsafeNewFunction(() => {
-  tapplint = require('tapplint');
-});
+import getTapplint from './get-tapplint';
 
 // (message: Object, err: Error) => string
-function selectMessageHtml(result) {
+function selectMessageHTML(result) {
   const { message, ruleId } = result;
   const { url } = ruleURI(ruleId || '');
   const link = ruleId ? `(<a href=${url}>${ruleId}</a>)` : '';
@@ -46,6 +43,8 @@ function selectMessageRange(editor, x) {
 function selectMessageType(message) {
   return message.severity === 2 ? 'Error' : 'Warning';
 }
+
+const tapplint = getTapplint();
 
 const SUPPORTED_SCOPES = [
   'source.js',
@@ -85,7 +84,7 @@ export function provideLinter() {
       return messages.map(message => {
         return {
           filePath,
-          html: selectMessageHtml(message),
+          html: selectMessageHTML(message),
           range: selectMessageRange(editor, message),
           type: selectMessageType(message)
         };
