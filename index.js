@@ -62,7 +62,7 @@ export function provideLinter() {
     name: 'tapplint',
     grammarScopes: SUPPORTED_SCOPES,
     scope: 'file',
-    lintOnFly: true,
+    lintOnFly: false,
     lint: editor => {
       const text = editor.getText();
       const filePath = editor.getPath();
