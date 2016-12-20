@@ -4,7 +4,10 @@ import { install } from 'atom-package-deps';
 import { rangeFromLineNumber } from 'atom-linter';
 import { allowUnsafeNewFunction } from 'loophole';
 import ruleURI from 'eslint-rule-documentation';
-import getTapplint from './get-tapplint';
+let tapplint;
+allowUnsafeNewFunction(() => {
+  tapplint = require('tapplint');
+});
 
 // (message: Object, err: Error) => string
 function selectMessageHTML(result) {
@@ -43,8 +46,6 @@ function selectMessageRange(editor, x) {
 function selectMessageType(message) {
   return message.severity === 2 ? 'Error' : 'Warning';
 }
-
-const tapplint = getTapplint();
 
 const SUPPORTED_SCOPES = [
   'source.js',
