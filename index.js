@@ -4,6 +4,7 @@ import { install } from 'atom-package-deps';
 import { rangeFromLineNumber } from 'atom-linter';
 import { allowUnsafeNewFunction } from 'loophole';
 import ruleURI from 'eslint-rule-documentation';
+import cosmiconfig from 'cosmiconfig';
 let tapplint;
 allowUnsafeNewFunction(() => {
   tapplint = require('tapplint');
@@ -72,23 +73,26 @@ export function provideLinter() {
         }]
       };
 
-      allowUnsafeNewFunction(() => {
-        report = tapplint.lintText(text, {
-          fileName: filePath
+      return cosmiconfig('tapplint').load(filePath).then(result => {
+        allowUnsafeNewFunction(() => {
+          report = tapplint.lintText(text, {
+            fileName: filePath,
+            config: result ? result.config || {} : {}
+          });
         });
-      });
 
-      const [{
-        messages
-      }] = report.results;
+        const [{
+          messages
+        }] = report.results;
 
-      return messages.map(message => {
-        return {
-          filePath,
-          html: selectMessageHTML(message),
-          range: selectMessageRange(editor, message),
-          type: selectMessageType(message)
-        };
+        return messages.map(message => {
+          return {
+            filePath,
+            html: selectMessageHTML(message),
+            range: selectMessageRange(editor, message),
+            type: selectMessageType(message)
+          };
+        });
       });
     }
   };
