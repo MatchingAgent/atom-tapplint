@@ -48,6 +48,24 @@ function selectMessageType(message) {
   return message.severity === 2 ? 'Error' : 'Warning';
 }
 
+let projectConfig = null;
+
+function getProjectConfig(filePath) {
+  if (projectConfig !== null) {
+    return Promise.resolve(projectConfig);
+  } else {
+    return cosmiconfig('tapplint').load(filePath).then(result => {
+      if (result === null) {
+        projectConfig = {};
+      } else {
+        projectConfig = result.config || {};
+      }
+
+      return projectConfig;
+    });
+  }
+}
+
 const SUPPORTED_SCOPES = [
   'source.js',
   'source.jsx',
@@ -73,11 +91,11 @@ export function provideLinter() {
         }]
       };
 
-      return cosmiconfig('tapplint').load(filePath).then(result => {
+      return getProjectConfig(filePath).then(config => {
         allowUnsafeNewFunction(() => {
           report = tapplint.lintText(text, {
             fileName: filePath,
-            config: result ? result.config || {} : {}
+            config
           });
         });
 
