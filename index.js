@@ -4,11 +4,8 @@ import { install } from 'atom-package-deps';
 import { rangeFromLineNumber } from 'atom-linter';
 import { allowUnsafeNewFunction } from 'loophole';
 import ruleURI from 'eslint-rule-documentation';
-import cosmiconfig from 'cosmiconfig';
-let tapplint;
-allowUnsafeNewFunction(() => {
-  tapplint = require('tapplint');
-});
+import getTapplint from './lib/get-tapplint';
+import getConfig from './lib/get-config';
 
 // (message: Object, err: Error) => string
 function selectMessageHTML(result) {
@@ -48,24 +45,6 @@ function selectMessageType(message) {
   return message.severity === 2 ? 'Error' : 'Warning';
 }
 
-let projectConfig = null;
-
-function getProjectConfig(filePath) {
-  if (projectConfig !== null) {
-    return Promise.resolve(projectConfig);
-  } else {
-    return cosmiconfig('tapplint').load(filePath).then(result => {
-      if (result === null) {
-        projectConfig = {};
-      } else {
-        projectConfig = result.config || {};
-      }
-
-      return projectConfig;
-    });
-  }
-}
-
 const SUPPORTED_SCOPES = [
   'source.js',
   'source.jsx',
@@ -83,15 +62,17 @@ export function provideLinter() {
     scope: 'file',
     lintOnFly: false,
     lint: editor => {
+      const tapplint = getTapplint();
       const text = editor.getText();
       const filePath = editor.getPath();
+
       let report = {
         results: [{
           messages: []
         }]
       };
 
-      return getProjectConfig(filePath).then(config => {
+      return getConfig(filePath).then(config => {
         allowUnsafeNewFunction(() => {
           report = tapplint.lintText(text, {
             fileName: filePath,
