@@ -1,7 +1,7 @@
 /** @babel */
 
 import { install } from 'atom-package-deps';
-import { rangeFromLineNumber } from 'atom-linter';
+import { generateRange } from 'atom-linter';
 import { allowUnsafeNewFunction } from 'loophole';
 import ruleURI from 'eslint-rule-documentation';
 import cosmiconfig from 'cosmiconfig';
@@ -32,11 +32,11 @@ function selectMessageRange(editor, x) {
     ];
   } else if (typeof x.line === 'number' && typeof x.column === 'number') {
     // we want msgCol to remain undefined if it was intentional so
-    // `rangeFromLineNumber` will give us a range over the entire line
+    // `generateRange` will give us a range over the entire line
     const msgCol = typeof x.column === 'undefined' ? x.column : x.column - 1;
 
     try {
-      return rangeFromLineNumber(editor, msgLine, msgCol);
+      return generateRange(editor, msgLine, msgCol);
     } catch (err) {
       throw new Error(`Failed getting range. This is most likely an issue with ESLint. (${x.ruleId} - ${x.message} at ${x.line}:${x.column})`);
     }
